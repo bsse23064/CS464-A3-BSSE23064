@@ -44,7 +44,11 @@ public class Spawner : MonoBehaviour
 
     void SpawnPowerUp()
     {
-        if (powerUpPrefabs == null || powerUpPrefabs.Length == 0) return;
+        if (powerUpPrefabs == null || powerUpPrefabs.Length == 0)
+        {
+            Debug.Log("no power ups");
+            return;
+        } 
 
         // Retry until the spot isn't on top of the player
         Vector3 pos = RandomPointInRoom(powerUpMargin);

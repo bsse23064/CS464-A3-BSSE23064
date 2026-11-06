@@ -8,6 +8,7 @@ public class Hazard : MonoBehaviour
     [SerializeField] float restTime = 0f, warnTime = 0.7f, strikeTime = 0.4f;
     [SerializeField] GameObject warning;
     [SerializeField] HitFeedback feedback = HitFeedback.Squash;
+    [SerializeField] float knockTime = 0.25f;
     public float RestTime => restTime; 
     public float WarnTime => warnTime;
     public float StrikeTime => strikeTime;
@@ -29,10 +30,13 @@ public class Hazard : MonoBehaviour
     void OnTriggerStay(Collider other)
     {
         if (!other.TryGetComponent(out Health health) || !health.TakeDamage(damage)) return;
-	if (other.TryGetComponent(out PlayerJuice juice)) juice.Play(feedback);
+        if (other.TryGetComponent(out PlayerJuice juice)) juice.Play(feedback);
+
         Rigidbody body = other.attachedRigidbody;
         if (body == null) return;
         Vector3 away = body.position - transform.position; away.y = 0f;
-        body.AddForce(away.normalized * knockback, ForceMode.Impulse);
+        Vector3 push = away.normalized * knockback;
+        if (other.TryGetComponent(out PlayerController player)) player.Knockback(push, knockTime);
+        else body.AddForce(push, ForceMode.Impulse);
     }
 }
